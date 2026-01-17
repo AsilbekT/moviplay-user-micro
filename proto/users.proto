@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package users;
+
+// User Service definition
+service UserService {
+    rpc CreateUser(CreateUserRequest) returns (UserResponse);
+    rpc GetUser(GetUserRequest) returns (UserResponse);
+}
+
+// CreateUser Request message
+message CreateUserRequest {
+    string username = 1;       // User's username
+    string email = 2;          // User's email
+    string phone_number = 3;   // User's phone number
+    string google_id = 4;      // User's Google account ID
+    string apple_id = 5;       // User's Apple account ID
+}
+
+// GetUser Request message
+message GetUserRequest {
+    string user_id = 1;        // User's ID
+}
+
+// User Response message
+message UserResponse {
+    string user_id = 1;        // User's ID
+    string username = 2;       // User's username
+    string email = 3;          // User's email
+    string phone_number = 4;   // User's phone number
+    string google_id = 5;      // User's Google account ID
+    string apple_id = 6;       // User's Apple account ID
+}
