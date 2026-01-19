@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from proto import users_pb2 as proto_dot_users__pb2
+from proto import users_pb2 as users__pb2
 
 GRPC_GENERATED_VERSION = '1.68.1'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in proto/users_pb2_grpc.py depends on'
+        + f' but the generated code in users_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -27,6 +27,8 @@ if _version_not_supported:
 
 class UserServiceStub(object):
     """User Service definition
+    This is the CANONICAL users.proto - all services should use this file.
+    DO NOT create duplicate users.proto files in other services.
     """
 
     def __init__(self, channel):
@@ -37,22 +39,50 @@ class UserServiceStub(object):
         """
         self.CreateUser = channel.unary_unary(
                 '/users.UserService/CreateUser',
-                request_serializer=proto_dot_users__pb2.CreateUserRequest.SerializeToString,
-                response_deserializer=proto_dot_users__pb2.UserResponse.FromString,
+                request_serializer=users__pb2.CreateUserRequest.SerializeToString,
+                response_deserializer=users__pb2.UserResponse.FromString,
                 _registered_method=True)
         self.GetUser = channel.unary_unary(
                 '/users.UserService/GetUser',
-                request_serializer=proto_dot_users__pb2.GetUserRequest.SerializeToString,
-                response_deserializer=proto_dot_users__pb2.UserResponse.FromString,
+                request_serializer=users__pb2.GetUserRequest.SerializeToString,
+                response_deserializer=users__pb2.UserResponse.FromString,
+                _registered_method=True)
+        self.ListProfiles = channel.unary_unary(
+                '/users.UserService/ListProfiles',
+                request_serializer=users__pb2.ListProfilesRequest.SerializeToString,
+                response_deserializer=users__pb2.ListProfilesResponse.FromString,
+                _registered_method=True)
+        self.CreateProfile = channel.unary_unary(
+                '/users.UserService/CreateProfile',
+                request_serializer=users__pb2.CreateProfileRequest.SerializeToString,
+                response_deserializer=users__pb2.ProfileResponse.FromString,
+                _registered_method=True)
+        self.GetProfile = channel.unary_unary(
+                '/users.UserService/GetProfile',
+                request_serializer=users__pb2.GetProfileRequest.SerializeToString,
+                response_deserializer=users__pb2.ProfileResponse.FromString,
+                _registered_method=True)
+        self.UpdateProfile = channel.unary_unary(
+                '/users.UserService/UpdateProfile',
+                request_serializer=users__pb2.UpdateProfileRequest.SerializeToString,
+                response_deserializer=users__pb2.ProfileResponse.FromString,
+                _registered_method=True)
+        self.DeleteProfile = channel.unary_unary(
+                '/users.UserService/DeleteProfile',
+                request_serializer=users__pb2.DeleteProfileRequest.SerializeToString,
+                response_deserializer=users__pb2.DeleteProfileResponse.FromString,
                 _registered_method=True)
 
 
 class UserServiceServicer(object):
     """User Service definition
+    This is the CANONICAL users.proto - all services should use this file.
+    DO NOT create duplicate users.proto files in other services.
     """
 
     def CreateUser(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+        """User operations
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -63,18 +93,74 @@ class UserServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ListProfiles(self, request, context):
+        """Profile operations
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreateProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_UserServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'CreateUser': grpc.unary_unary_rpc_method_handler(
                     servicer.CreateUser,
-                    request_deserializer=proto_dot_users__pb2.CreateUserRequest.FromString,
-                    response_serializer=proto_dot_users__pb2.UserResponse.SerializeToString,
+                    request_deserializer=users__pb2.CreateUserRequest.FromString,
+                    response_serializer=users__pb2.UserResponse.SerializeToString,
             ),
             'GetUser': grpc.unary_unary_rpc_method_handler(
                     servicer.GetUser,
-                    request_deserializer=proto_dot_users__pb2.GetUserRequest.FromString,
-                    response_serializer=proto_dot_users__pb2.UserResponse.SerializeToString,
+                    request_deserializer=users__pb2.GetUserRequest.FromString,
+                    response_serializer=users__pb2.UserResponse.SerializeToString,
+            ),
+            'ListProfiles': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListProfiles,
+                    request_deserializer=users__pb2.ListProfilesRequest.FromString,
+                    response_serializer=users__pb2.ListProfilesResponse.SerializeToString,
+            ),
+            'CreateProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateProfile,
+                    request_deserializer=users__pb2.CreateProfileRequest.FromString,
+                    response_serializer=users__pb2.ProfileResponse.SerializeToString,
+            ),
+            'GetProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetProfile,
+                    request_deserializer=users__pb2.GetProfileRequest.FromString,
+                    response_serializer=users__pb2.ProfileResponse.SerializeToString,
+            ),
+            'UpdateProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateProfile,
+                    request_deserializer=users__pb2.UpdateProfileRequest.FromString,
+                    response_serializer=users__pb2.ProfileResponse.SerializeToString,
+            ),
+            'DeleteProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteProfile,
+                    request_deserializer=users__pb2.DeleteProfileRequest.FromString,
+                    response_serializer=users__pb2.DeleteProfileResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -86,6 +172,8 @@ def add_UserServiceServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class UserService(object):
     """User Service definition
+    This is the CANONICAL users.proto - all services should use this file.
+    DO NOT create duplicate users.proto files in other services.
     """
 
     @staticmethod
@@ -103,8 +191,8 @@ class UserService(object):
             request,
             target,
             '/users.UserService/CreateUser',
-            proto_dot_users__pb2.CreateUserRequest.SerializeToString,
-            proto_dot_users__pb2.UserResponse.FromString,
+            users__pb2.CreateUserRequest.SerializeToString,
+            users__pb2.UserResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -130,8 +218,143 @@ class UserService(object):
             request,
             target,
             '/users.UserService/GetUser',
-            proto_dot_users__pb2.GetUserRequest.SerializeToString,
-            proto_dot_users__pb2.UserResponse.FromString,
+            users__pb2.GetUserRequest.SerializeToString,
+            users__pb2.UserResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListProfiles(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/users.UserService/ListProfiles',
+            users__pb2.ListProfilesRequest.SerializeToString,
+            users__pb2.ListProfilesResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CreateProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/users.UserService/CreateProfile',
+            users__pb2.CreateProfileRequest.SerializeToString,
+            users__pb2.ProfileResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/users.UserService/GetProfile',
+            users__pb2.GetProfileRequest.SerializeToString,
+            users__pb2.ProfileResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UpdateProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/users.UserService/UpdateProfile',
+            users__pb2.UpdateProfileRequest.SerializeToString,
+            users__pb2.ProfileResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/users.UserService/DeleteProfile',
+            users__pb2.DeleteProfileRequest.SerializeToString,
+            users__pb2.DeleteProfileResponse.FromString,
             options,
             channel_credentials,
             insecure,
