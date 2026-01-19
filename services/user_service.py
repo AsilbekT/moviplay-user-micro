@@ -32,13 +32,16 @@ class UserService(users_pb2_grpc.UserServiceServicer):
                 request.apple_id,
             ])
             if not has_identifier:
+                logger.warning("CreateUser: No identifier provided")
                 await abort(
                     context,
                     grpc.StatusCode.INVALID_ARGUMENT,
                     ReasonCodes.INVALID_ARGUMENT,
                     "At least one identifier (email, phone_number, google_id, apple_id, or username) is required.",
                 )
+                return  # Must return after abort
 
+            logger.info("CreateUser: Calling db.create_or_update_user...")
             user_id = await self.db.create_or_update_user(
                 username=request.username if request.username else None,
                 email=request.email if request.email else None,
@@ -46,7 +49,9 @@ class UserService(users_pb2_grpc.UserServiceServicer):
                 google_id=request.google_id if request.google_id else None,
                 apple_id=request.apple_id if request.apple_id else None,
             )
-            return users_pb2.UserResponse(
+            logger.info(f"CreateUser: DB returned user_id={user_id}")
+
+            response = users_pb2.UserResponse(
                 user_id=int(user_id),
                 username=request.username,
                 email=request.email,
@@ -54,30 +59,38 @@ class UserService(users_pb2_grpc.UserServiceServicer):
                 google_id=request.google_id,
                 apple_id=request.apple_id,
             )
+            logger.info(f"CreateUser: Returning response with user_id={response.user_id}")
+            return response
 
         except IdentityCollisionError:
+            logger.warning("CreateUser: IdentityCollisionError")
             await abort(
                 context,
                 grpc.StatusCode.INVALID_ARGUMENT,
                 ReasonCodes.IDENTITY_CONFLICT,
                 "Provided identifiers match multiple existing users.",
             )
+            return
 
-        except asyncpg.PostgresConnectionError:
+        except asyncpg.PostgresConnectionError as e:
+            logger.error(f"CreateUser: PostgresConnectionError: {e}")
             await abort(
                 context,
                 grpc.StatusCode.UNAVAILABLE,
                 ReasonCodes.DB_UNAVAILABLE,
                 "Database is temporarily unavailable.",
             )
+            return
 
-        except asyncpg.QueryCanceledError:
+        except asyncpg.QueryCanceledError as e:
+            logger.error(f"CreateUser: QueryCanceledError: {e}")
             await abort(
                 context,
                 grpc.StatusCode.DEADLINE_EXCEEDED,
                 ReasonCodes.DB_TIMEOUT,
                 "Database request timed out.",
             )
+            return
 
         except Exception as e:
             logger.exception(f"CreateUser failed with exception: {e}")
@@ -87,6 +100,7 @@ class UserService(users_pb2_grpc.UserServiceServicer):
                 ReasonCodes.INTERNAL_ERROR,
                 "An internal error occurred.",
             )
+            return
 
     async def GetUser(self, request, context):
         try:
