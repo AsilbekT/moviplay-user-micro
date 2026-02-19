@@ -91,8 +91,13 @@ async def abort(
     )
     status.details.extend(details)
 
-    # Set the status on the context
-    await context.abort_with_status(rpc_status.to_status(status))
-    # Raise GrpcAbortException to exit the handler
-    # This inherits from BaseException, so `except Exception:` won't catch it
+    # Set the status on the context and raise GrpcAbortException.
+    # grpc.aio's abort_with_status() raises AbortError (an Exception subclass),
+    # which would be caught by generic `except Exception:` handlers in servicers.
+    # We catch it here and re-raise as GrpcAbortException (a BaseException subclass)
+    # so it passes through those handlers cleanly.
+    try:
+        await context.abort_with_status(rpc_status.to_status(status))
+    except Exception:
+        raise GrpcAbortException(message)
     raise GrpcAbortException(message)

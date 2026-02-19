@@ -47,6 +47,16 @@ class UserServiceStub(object):
                 request_serializer=users__pb2.GetUserRequest.SerializeToString,
                 response_deserializer=users__pb2.UserResponse.FromString,
                 _registered_method=True)
+        self.ListUsers = channel.unary_unary(
+                '/users.UserService/ListUsers',
+                request_serializer=users__pb2.ListUsersRequest.SerializeToString,
+                response_deserializer=users__pb2.ListUsersResponse.FromString,
+                _registered_method=True)
+        self.DeleteUser = channel.unary_unary(
+                '/users.UserService/DeleteUser',
+                request_serializer=users__pb2.DeleteUserRequest.SerializeToString,
+                response_deserializer=users__pb2.DeleteUserResponse.FromString,
+                _registered_method=True)
         self.ListProfiles = channel.unary_unary(
                 '/users.UserService/ListProfiles',
                 request_serializer=users__pb2.ListProfilesRequest.SerializeToString,
@@ -88,6 +98,18 @@ class UserServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetUser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListUsers(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteUser(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -136,6 +158,16 @@ def add_UserServiceServicer_to_server(servicer, server):
                     servicer.GetUser,
                     request_deserializer=users__pb2.GetUserRequest.FromString,
                     response_serializer=users__pb2.UserResponse.SerializeToString,
+            ),
+            'ListUsers': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListUsers,
+                    request_deserializer=users__pb2.ListUsersRequest.FromString,
+                    response_serializer=users__pb2.ListUsersResponse.SerializeToString,
+            ),
+            'DeleteUser': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteUser,
+                    request_deserializer=users__pb2.DeleteUserRequest.FromString,
+                    response_serializer=users__pb2.DeleteUserResponse.SerializeToString,
             ),
             'ListProfiles': grpc.unary_unary_rpc_method_handler(
                     servicer.ListProfiles,
@@ -220,6 +252,60 @@ class UserService(object):
             '/users.UserService/GetUser',
             users__pb2.GetUserRequest.SerializeToString,
             users__pb2.UserResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListUsers(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/users.UserService/ListUsers',
+            users__pb2.ListUsersRequest.SerializeToString,
+            users__pb2.ListUsersResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteUser(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/users.UserService/DeleteUser',
+            users__pb2.DeleteUserRequest.SerializeToString,
+            users__pb2.DeleteUserResponse.FromString,
             options,
             channel_credentials,
             insecure,

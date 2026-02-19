@@ -45,7 +45,7 @@ class Database:
 
     async def get_user(self, user_id):
         query = """
-        SELECT id, username, email, phone_number, google_id, apple_id
+        SELECT id, username, email, phone_number, google_id, apple_id, is_admin
         FROM users
         WHERE id = $1;
         """
@@ -54,6 +54,9 @@ class Database:
     async def create_or_update_user(self, username, email, phone_number, google_id, apple_id):
         """
         Create or update a user by any matching identifier.
+
+        Returns:
+            dict with user data including id, username, email, phone_number, google_id, apple_id, is_admin
 
         Raises:
             IdentityCollisionError: If identifiers match different existing users
@@ -85,8 +88,8 @@ class Database:
 
                 if rows:
                     user_id = rows[0]["id"]
-                    # Update only non-empty fields
-                    await conn.execute("""
+                    # Update only non-empty fields and return full user
+                    user = await conn.fetchrow("""
                         UPDATE users SET
                             username     = COALESCE(NULLIF($1, ''), username),
                             email        = COALESCE(NULLIF($2, ''), email),
@@ -95,16 +98,46 @@ class Database:
                             apple_id     = COALESCE(NULLIF($5, ''), apple_id),
                             updated_at   = now()
                         WHERE id = $6
+                        RETURNING id, username, email, phone_number, google_id, apple_id, is_admin
                     """, username, email, phone_number, google_id, apple_id, user_id)
-                    return user_id
+                    return dict(user)
 
-                # Insert new user
-                user_id = await conn.fetchval("""
-                    INSERT INTO users (username, email, phone_number, google_id, apple_id)
-                    VALUES (NULLIF($1,''), NULLIF($2,''), NULLIF($3,''), NULLIF($4,''), NULLIF($5,''))
-                    RETURNING id
+                # Insert new user and return full user
+                user = await conn.fetchrow("""
+                    INSERT INTO users (username, email, phone_number, google_id, apple_id, is_admin)
+                    VALUES (NULLIF($1,''), NULLIF($2,''), NULLIF($3,''), NULLIF($4,''), NULLIF($5,''), false)
+                    RETURNING id, username, email, phone_number, google_id, apple_id, is_admin
                 """, username, email, phone_number, google_id, apple_id)
-                return user_id
+                return dict(user)
+
+    async def list_users(self, page: int = 1, page_size: int = 10) -> dict:
+        """List all users with pagination."""
+        offset = (page - 1) * page_size
+
+        async with self.pool.acquire() as conn:
+            total = await conn.fetchval("SELECT COUNT(*) FROM users")
+
+            rows = await conn.fetch("""
+                SELECT id, username, email, phone_number, google_id, apple_id, is_admin
+                FROM users
+                ORDER BY id ASC
+                LIMIT $1 OFFSET $2
+            """, page_size, offset)
+
+            return {
+                "users": [dict(row) for row in rows],
+                "total_count": total,
+                "page": page,
+                "total_pages": max(1, (total + page_size - 1) // page_size),
+            }
+
+    async def delete_user(self, user_id: int) -> bool:
+        """Delete a user and all their profiles. Returns True if deleted, False if not found."""
+        async with self.pool.acquire() as conn:
+            async with conn.transaction():
+                await conn.execute("DELETE FROM profiles WHERE user_id = $1", user_id)
+                result = await conn.execute("DELETE FROM users WHERE id = $1", user_id)
+                return result == "DELETE 1"
 
     # ============ Profile Methods ============
 

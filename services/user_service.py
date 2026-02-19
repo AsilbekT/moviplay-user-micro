@@ -42,24 +42,25 @@ class UserService(users_pb2_grpc.UserServiceServicer):
                 return  # Must return after abort
 
             logger.info("CreateUser: Calling db.create_or_update_user...")
-            user_id = await self.db.create_or_update_user(
+            user = await self.db.create_or_update_user(
                 username=request.username if request.username else None,
                 email=request.email if request.email else None,
                 phone_number=request.phone_number if request.phone_number else None,
                 google_id=request.google_id if request.google_id else None,
                 apple_id=request.apple_id if request.apple_id else None,
             )
-            logger.info(f"CreateUser: DB returned user_id={user_id}")
+            logger.info(f"CreateUser: DB returned user_id={user['id']}, is_admin={user.get('is_admin', False)}")
 
             response = users_pb2.UserResponse(
-                user_id=int(user_id),
-                username=request.username,
-                email=request.email,
-                phone_number=request.phone_number,
-                google_id=request.google_id,
-                apple_id=request.apple_id,
+                user_id=int(user["id"]),
+                username=user.get("username") or "",
+                email=user.get("email") or "",
+                phone_number=user.get("phone_number") or "",
+                google_id=user.get("google_id") or "",
+                apple_id=user.get("apple_id") or "",
+                is_admin=user.get("is_admin", False),
             )
-            logger.info(f"CreateUser: Returning response with user_id={response.user_id}")
+            logger.info(f"CreateUser: Returning response with user_id={response.user_id}, is_admin={response.is_admin}")
             return response
 
         except IdentityCollisionError:
@@ -130,7 +131,107 @@ class UserService(users_pb2_grpc.UserServiceServicer):
                 phone_number=user["phone_number"] if user["phone_number"] else "",
                 google_id=user["google_id"] if user["google_id"] else "",
                 apple_id=user["apple_id"] if user["apple_id"] else "",
+                is_admin=user.get("is_admin", False),
             )
+
+        except asyncpg.PostgresConnectionError:
+            await abort(
+                context,
+                grpc.StatusCode.UNAVAILABLE,
+                ReasonCodes.DB_UNAVAILABLE,
+                "Database is temporarily unavailable.",
+            )
+
+        except asyncpg.QueryCanceledError:
+            await abort(
+                context,
+                grpc.StatusCode.DEADLINE_EXCEEDED,
+                ReasonCodes.DB_TIMEOUT,
+                "Database request timed out.",
+            )
+
+        except Exception:
+            await abort(
+                context,
+                grpc.StatusCode.INTERNAL,
+                ReasonCodes.INTERNAL_ERROR,
+                "An internal error occurred.",
+            )
+
+    async def ListUsers(self, request, context):
+        try:
+            page = max(request.page, 1)
+            page_size = min(max(request.page_size, 1), 100)
+
+            result = await self.db.list_users(page, page_size)
+
+            return users_pb2.ListUsersResponse(
+                users=[
+                    users_pb2.UserResponse(
+                        user_id=int(u["id"]),
+                        username=u.get("username") or "",
+                        email=u.get("email") or "",
+                        phone_number=u.get("phone_number") or "",
+                        google_id=u.get("google_id") or "",
+                        apple_id=u.get("apple_id") or "",
+                        is_admin=u.get("is_admin", False),
+                    )
+                    for u in result["users"]
+                ],
+                total_count=result["total_count"],
+                page=result["page"],
+                total_pages=result["total_pages"],
+            )
+
+        except asyncpg.PostgresConnectionError:
+            await abort(
+                context,
+                grpc.StatusCode.UNAVAILABLE,
+                ReasonCodes.DB_UNAVAILABLE,
+                "Database is temporarily unavailable.",
+            )
+            return
+
+        except asyncpg.QueryCanceledError:
+            await abort(
+                context,
+                grpc.StatusCode.DEADLINE_EXCEEDED,
+                ReasonCodes.DB_TIMEOUT,
+                "Database request timed out.",
+            )
+            return
+
+        except Exception as e:
+            logger.exception(f"ListUsers failed: {e}")
+            await abort(
+                context,
+                grpc.StatusCode.INTERNAL,
+                ReasonCodes.INTERNAL_ERROR,
+                "An internal error occurred.",
+            )
+            return
+
+    async def DeleteUser(self, request, context):
+        try:
+            if request.user_id <= 0:
+                await abort(
+                    context,
+                    grpc.StatusCode.INVALID_ARGUMENT,
+                    ReasonCodes.INVALID_ID,
+                    "Invalid user_id. Must be a positive integer.",
+                    fields=[FieldViolation("user_id", "Must be greater than 0")],
+                )
+
+            deleted = await self.db.delete_user(request.user_id)
+            if not deleted:
+                await abort(
+                    context,
+                    grpc.StatusCode.NOT_FOUND,
+                    ReasonCodes.USER_NOT_FOUND,
+                    f"User with ID {request.user_id} not found.",
+                )
+
+            return users_pb2.DeleteUserResponse()
 
         except asyncpg.PostgresConnectionError:
             await abort(
