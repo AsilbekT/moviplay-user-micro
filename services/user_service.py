@@ -315,10 +315,14 @@ class UserService(users_pb2_grpc.UserServiceServicer):
                 return users_pb2.VerifyPasswordResponse(valid=False)
 
             import bcrypt
-            valid = bcrypt.checkpw(
-                request.password.encode('utf-8'),
-                user["password_hash"].encode('utf-8')
-            )
+            try:
+                valid = bcrypt.checkpw(
+                    request.password.encode('utf-8'),
+                    user["password_hash"].encode('utf-8')
+                )
+            except (ValueError, TypeError):
+                logger.error(f"Invalid password_hash format for user {user['id']}")
+                return users_pb2.VerifyPasswordResponse(valid=False)
 
             if not valid:
                 return users_pb2.VerifyPasswordResponse(valid=False)
