@@ -139,6 +139,25 @@ class Database:
                 result = await conn.execute("DELETE FROM users WHERE id = $1", user_id)
                 return result == "DELETE 1"
 
+    # ============ Password Methods (admin only) ============
+
+    async def set_password(self, user_id: int, password_hash: str):
+        """Set password hash for a user."""
+        await self.pool.execute(
+            "UPDATE users SET password_hash = $1, updated_at = now() WHERE id = $2",
+            password_hash, user_id
+        )
+
+    async def get_user_by_email_with_password(self, email: str) -> dict | None:
+        """Get user by email including password_hash for verification."""
+        row = await self.pool.fetchrow("""
+            SELECT id, username, email, phone_number, google_id, apple_id,
+                   is_admin, password_hash
+            FROM users
+            WHERE email = $1
+        """, email)
+        return dict(row) if row else None
+
     # ============ Profile Methods ============
 
     async def list_profiles(self, user_id: int) -> list[dict]:

@@ -257,6 +257,88 @@ class UserService(users_pb2_grpc.UserServiceServicer):
                 "An internal error occurred.",
             )
 
+    # ============ Password Operations (admin only) ============
+
+    async def SetPassword(self, request, context):
+        try:
+            if request.user_id <= 0:
+                await abort(
+                    context,
+                    grpc.StatusCode.INVALID_ARGUMENT,
+                    ReasonCodes.INVALID_ID,
+                    "Invalid user_id. Must be a positive integer.",
+                    fields=[FieldViolation("user_id", "Must be greater than 0")],
+                )
+                return
+
+            if not request.password or len(request.password) < 8:
+                await abort(
+                    context,
+                    grpc.StatusCode.INVALID_ARGUMENT,
+                    ReasonCodes.INVALID_ARGUMENT,
+                    "Password must be at least 8 characters.",
+                    fields=[FieldViolation("password", "Must be at least 8 characters")],
+                )
+                return
+
+            import bcrypt
+            password_hash = bcrypt.hashpw(
+                request.password.encode('utf-8'),
+                bcrypt.gensalt()
+            ).decode('utf-8')
+
+            await self.db.set_password(request.user_id, password_hash)
+            return users_pb2.SetPasswordResponse()
+
+        except Exception as e:
+            logger.exception(f"SetPassword failed: {e}")
+            await abort(
+                context,
+                grpc.StatusCode.INTERNAL,
+                ReasonCodes.INTERNAL_ERROR,
+                "An internal error occurred.",
+            )
+
+    async def VerifyPassword(self, request, context):
+        try:
+            if not request.email or not request.password:
+                await abort(
+                    context,
+                    grpc.StatusCode.INVALID_ARGUMENT,
+                    ReasonCodes.INVALID_ARGUMENT,
+                    "Email and password are required.",
+                )
+                return users_pb2.VerifyPasswordResponse(valid=False)
+
+            user = await self.db.get_user_by_email_with_password(request.email)
+            if not user or not user.get("password_hash"):
+                return users_pb2.VerifyPasswordResponse(valid=False)
+
+            import bcrypt
+            valid = bcrypt.checkpw(
+                request.password.encode('utf-8'),
+                user["password_hash"].encode('utf-8')
+            )
+
+            if not valid:
+                return users_pb2.VerifyPasswordResponse(valid=False)
+
+            return users_pb2.VerifyPasswordResponse(
+                valid=True,
+                user_id=int(user["id"]),
+                username=user.get("username") or "",
+                is_admin=user.get("is_admin", False),
+            )
+
+        except Exception as e:
+            logger.exception(f"VerifyPassword failed: {e}")
+            await abort(
+                context,
+                grpc.StatusCode.INTERNAL,
+                ReasonCodes.INTERNAL_ERROR,
+                "An internal error occurred.",
+            )
+
     # ============ Profile Operations ============
 
     async def ListProfiles(self, request, context):

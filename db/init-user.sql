@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS users (
 
   name VARCHAR(100),
   username VARCHAR(50) UNIQUE,
+  password_hash VARCHAR(255),
+  is_admin BOOLEAN NOT NULL DEFAULT false,
 
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
