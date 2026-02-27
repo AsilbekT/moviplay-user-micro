@@ -57,6 +57,16 @@ class UserServiceStub(object):
                 request_serializer=users__pb2.DeleteUserRequest.SerializeToString,
                 response_deserializer=users__pb2.DeleteUserResponse.FromString,
                 _registered_method=True)
+        self.SetPassword = channel.unary_unary(
+                '/users.UserService/SetPassword',
+                request_serializer=users__pb2.SetPasswordRequest.SerializeToString,
+                response_deserializer=users__pb2.SetPasswordResponse.FromString,
+                _registered_method=True)
+        self.VerifyPassword = channel.unary_unary(
+                '/users.UserService/VerifyPassword',
+                request_serializer=users__pb2.VerifyPasswordRequest.SerializeToString,
+                response_deserializer=users__pb2.VerifyPasswordResponse.FromString,
+                _registered_method=True)
         self.ListProfiles = channel.unary_unary(
                 '/users.UserService/ListProfiles',
                 request_serializer=users__pb2.ListProfilesRequest.SerializeToString,
@@ -115,6 +125,19 @@ class UserServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def SetPassword(self, request, context):
+        """Password operations (admin only)
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def VerifyPassword(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def ListProfiles(self, request, context):
         """Profile operations
         """
@@ -168,6 +191,16 @@ def add_UserServiceServicer_to_server(servicer, server):
                     servicer.DeleteUser,
                     request_deserializer=users__pb2.DeleteUserRequest.FromString,
                     response_serializer=users__pb2.DeleteUserResponse.SerializeToString,
+            ),
+            'SetPassword': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetPassword,
+                    request_deserializer=users__pb2.SetPasswordRequest.FromString,
+                    response_serializer=users__pb2.SetPasswordResponse.SerializeToString,
+            ),
+            'VerifyPassword': grpc.unary_unary_rpc_method_handler(
+                    servicer.VerifyPassword,
+                    request_deserializer=users__pb2.VerifyPasswordRequest.FromString,
+                    response_serializer=users__pb2.VerifyPasswordResponse.SerializeToString,
             ),
             'ListProfiles': grpc.unary_unary_rpc_method_handler(
                     servicer.ListProfiles,
@@ -306,6 +339,60 @@ class UserService(object):
             '/users.UserService/DeleteUser',
             users__pb2.DeleteUserRequest.SerializeToString,
             users__pb2.DeleteUserResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetPassword(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/users.UserService/SetPassword',
+            users__pb2.SetPasswordRequest.SerializeToString,
+            users__pb2.SetPasswordResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def VerifyPassword(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/users.UserService/VerifyPassword',
+            users__pb2.VerifyPasswordRequest.SerializeToString,
+            users__pb2.VerifyPasswordResponse.FromString,
             options,
             channel_credentials,
             insecure,

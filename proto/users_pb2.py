@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import field_mask_pb2 as google_dot_protobuf_dot_field__mask__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0busers.proto\x12\x05users\x1a google/protobuf/field_mask.proto\"o\n\x11\x43reateUserRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\t\x12\x14\n\x0cphone_number\x18\x03 \x01(\t\x12\x11\n\tgoogle_id\x18\x04 \x01(\t\x12\x10\n\x08\x61pple_id\x18\x05 \x01(\t\"!\n\x0eGetUserRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"\x8d\x01\n\x0cUserResponse\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x10\n\x08username\x18\x02 \x01(\t\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\x14\n\x0cphone_number\x18\x04 \x01(\t\x12\x11\n\tgoogle_id\x18\x05 \x01(\t\x12\x10\n\x08\x61pple_id\x18\x06 \x01(\t\x12\x10\n\x08is_admin\x18\x07 \x01(\x08\"3\n\x10ListUsersRequest\x12\x0c\n\x04page\x18\x01 \x01(\x05\x12\x11\n\tpage_size\x18\x02 \x01(\x05\"o\n\x11ListUsersResponse\x12\"\n\x05users\x18\x01 \x03(\x0b\x32\x13.users.UserResponse\x12\x13\n\x0btotal_count\x18\x02 \x01(\x05\x12\x0c\n\x04page\x18\x03 \x01(\x05\x12\x13\n\x0btotal_pages\x18\x04 \x01(\x05\"$\n\x11\x44\x65leteUserRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"\x14\n\x12\x44\x65leteUserResponse\"\xc1\x01\n\x07Profile\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0f\n\x07user_id\x18\x02 \x01(\x03\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0f\n\x07is_kids\x18\x04 \x01(\x08\x12\x0e\n\x06\x61vatar\x18\x05 \x01(\t\x12\x10\n\x08language\x18\x06 \x01(\t\x12\x16\n\x0ematurity_level\x18\x07 \x01(\t\x12\x18\n\x10preferences_json\x18\x08 \x01(\x0c\x12\x12\n\ncreated_at\x18\t \x01(\t\x12\x12\n\nupdated_at\x18\n \x01(\t\"&\n\x13ListProfilesRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"8\n\x14ListProfilesResponse\x12 \n\x08profiles\x18\x01 \x03(\x0b\x32\x0e.users.Profile\"\x80\x01\n\x14\x43reateProfileRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0f\n\x07is_kids\x18\x03 \x01(\x08\x12\x0e\n\x06\x61vatar\x18\x04 \x01(\t\x12\x10\n\x08language\x18\x05 \x01(\t\x12\x16\n\x0ematurity_level\x18\x06 \x01(\t\"\'\n\x11GetProfileRequest\x12\x12\n\nprofile_id\x18\x01 \x01(\x03\"\xce\x01\n\x14UpdateProfileRequest\x12\x12\n\nprofile_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0f\n\x07is_kids\x18\x03 \x01(\x08\x12\x0e\n\x06\x61vatar\x18\x04 \x01(\t\x12\x10\n\x08language\x18\x05 \x01(\t\x12\x16\n\x0ematurity_level\x18\x06 \x01(\t\x12\x18\n\x10preferences_json\x18\x07 \x01(\x0c\x12/\n\x0bupdate_mask\x18\x0f \x01(\x0b\x32\x1a.google.protobuf.FieldMask\"*\n\x14\x44\x65leteProfileRequest\x12\x12\n\nprofile_id\x18\x01 \x01(\x03\"\x17\n\x15\x44\x65leteProfileResponse\"2\n\x0fProfileResponse\x12\x1f\n\x07profile\x18\x01 \x01(\x0b\x32\x0e.users.Profile2\xe5\x04\n\x0bUserService\x12;\n\nCreateUser\x12\x18.users.CreateUserRequest\x1a\x13.users.UserResponse\x12\x35\n\x07GetUser\x12\x15.users.GetUserRequest\x1a\x13.users.UserResponse\x12>\n\tListUsers\x12\x17.users.ListUsersRequest\x1a\x18.users.ListUsersResponse\x12\x41\n\nDeleteUser\x12\x18.users.DeleteUserRequest\x1a\x19.users.DeleteUserResponse\x12G\n\x0cListProfiles\x12\x1a.users.ListProfilesRequest\x1a\x1b.users.ListProfilesResponse\x12\x44\n\rCreateProfile\x12\x1b.users.CreateProfileRequest\x1a\x16.users.ProfileResponse\x12>\n\nGetProfile\x12\x18.users.GetProfileRequest\x1a\x16.users.ProfileResponse\x12\x44\n\rUpdateProfile\x12\x1b.users.UpdateProfileRequest\x1a\x16.users.ProfileResponse\x12J\n\rDeleteProfile\x12\x1b.users.DeleteProfileRequest\x1a\x1c.users.DeleteProfileResponseB\x14Z\x12shared/proto/usersb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0busers.proto\x12\x05users\x1a google/protobuf/field_mask.proto\"o\n\x11\x43reateUserRequest\x12\x10\n\x08username\x18\x01 \x01(\t\x12\r\n\x05\x65mail\x18\x02 \x01(\t\x12\x14\n\x0cphone_number\x18\x03 \x01(\t\x12\x11\n\tgoogle_id\x18\x04 \x01(\t\x12\x10\n\x08\x61pple_id\x18\x05 \x01(\t\"!\n\x0eGetUserRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"\x8d\x01\n\x0cUserResponse\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x10\n\x08username\x18\x02 \x01(\t\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\x14\n\x0cphone_number\x18\x04 \x01(\t\x12\x11\n\tgoogle_id\x18\x05 \x01(\t\x12\x10\n\x08\x61pple_id\x18\x06 \x01(\t\x12\x10\n\x08is_admin\x18\x07 \x01(\x08\"3\n\x10ListUsersRequest\x12\x0c\n\x04page\x18\x01 \x01(\x05\x12\x11\n\tpage_size\x18\x02 \x01(\x05\"o\n\x11ListUsersResponse\x12\"\n\x05users\x18\x01 \x03(\x0b\x32\x13.users.UserResponse\x12\x13\n\x0btotal_count\x18\x02 \x01(\x05\x12\x0c\n\x04page\x18\x03 \x01(\x05\x12\x13\n\x0btotal_pages\x18\x04 \x01(\x05\"$\n\x11\x44\x65leteUserRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"\x14\n\x12\x44\x65leteUserResponse\"7\n\x12SetPasswordRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x10\n\x08password\x18\x02 \x01(\t\"\x15\n\x13SetPasswordResponse\"8\n\x15VerifyPasswordRequest\x12\r\n\x05\x65mail\x18\x01 \x01(\t\x12\x10\n\x08password\x18\x02 \x01(\t\"\\\n\x16VerifyPasswordResponse\x12\r\n\x05valid\x18\x01 \x01(\x08\x12\x0f\n\x07user_id\x18\x02 \x01(\x03\x12\x10\n\x08username\x18\x03 \x01(\t\x12\x10\n\x08is_admin\x18\x04 \x01(\x08\"\xc1\x01\n\x07Profile\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0f\n\x07user_id\x18\x02 \x01(\x03\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0f\n\x07is_kids\x18\x04 \x01(\x08\x12\x0e\n\x06\x61vatar\x18\x05 \x01(\t\x12\x10\n\x08language\x18\x06 \x01(\t\x12\x16\n\x0ematurity_level\x18\x07 \x01(\t\x12\x18\n\x10preferences_json\x18\x08 \x01(\x0c\x12\x12\n\ncreated_at\x18\t \x01(\t\x12\x12\n\nupdated_at\x18\n \x01(\t\"&\n\x13ListProfilesRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"8\n\x14ListProfilesResponse\x12 \n\x08profiles\x18\x01 \x03(\x0b\x32\x0e.users.Profile\"\x80\x01\n\x14\x43reateProfileRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0f\n\x07is_kids\x18\x03 \x01(\x08\x12\x0e\n\x06\x61vatar\x18\x04 \x01(\t\x12\x10\n\x08language\x18\x05 \x01(\t\x12\x16\n\x0ematurity_level\x18\x06 \x01(\t\"\'\n\x11GetProfileRequest\x12\x12\n\nprofile_id\x18\x01 \x01(\x03\"\xce\x01\n\x14UpdateProfileRequest\x12\x12\n\nprofile_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x0f\n\x07is_kids\x18\x03 \x01(\x08\x12\x0e\n\x06\x61vatar\x18\x04 \x01(\t\x12\x10\n\x08language\x18\x05 \x01(\t\x12\x16\n\x0ematurity_level\x18\x06 \x01(\t\x12\x18\n\x10preferences_json\x18\x07 \x01(\x0c\x12/\n\x0bupdate_mask\x18\x0f \x01(\x0b\x32\x1a.google.protobuf.FieldMask\"*\n\x14\x44\x65leteProfileRequest\x12\x12\n\nprofile_id\x18\x01 \x01(\x03\"\x17\n\x15\x44\x65leteProfileResponse\"2\n\x0fProfileResponse\x12\x1f\n\x07profile\x18\x01 \x01(\x0b\x32\x0e.users.Profile2\xfa\x05\n\x0bUserService\x12;\n\nCreateUser\x12\x18.users.CreateUserRequest\x1a\x13.users.UserResponse\x12\x35\n\x07GetUser\x12\x15.users.GetUserRequest\x1a\x13.users.UserResponse\x12>\n\tListUsers\x12\x17.users.ListUsersRequest\x1a\x18.users.ListUsersResponse\x12\x41\n\nDeleteUser\x12\x18.users.DeleteUserRequest\x1a\x19.users.DeleteUserResponse\x12\x44\n\x0bSetPassword\x12\x19.users.SetPasswordRequest\x1a\x1a.users.SetPasswordResponse\x12M\n\x0eVerifyPassword\x12\x1c.users.VerifyPasswordRequest\x1a\x1d.users.VerifyPasswordResponse\x12G\n\x0cListProfiles\x12\x1a.users.ListProfilesRequest\x1a\x1b.users.ListProfilesResponse\x12\x44\n\rCreateProfile\x12\x1b.users.CreateProfileRequest\x1a\x16.users.ProfileResponse\x12>\n\nGetProfile\x12\x18.users.GetProfileRequest\x1a\x16.users.ProfileResponse\x12\x44\n\rUpdateProfile\x12\x1b.users.UpdateProfileRequest\x1a\x16.users.ProfileResponse\x12J\n\rDeleteProfile\x12\x1b.users.DeleteProfileRequest\x1a\x1c.users.DeleteProfileResponseB\x14Z\x12shared/proto/usersb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -47,24 +47,32 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_DELETEUSERREQUEST']._serialized_end=550
   _globals['_DELETEUSERRESPONSE']._serialized_start=552
   _globals['_DELETEUSERRESPONSE']._serialized_end=572
-  _globals['_PROFILE']._serialized_start=575
-  _globals['_PROFILE']._serialized_end=768
-  _globals['_LISTPROFILESREQUEST']._serialized_start=770
-  _globals['_LISTPROFILESREQUEST']._serialized_end=808
-  _globals['_LISTPROFILESRESPONSE']._serialized_start=810
-  _globals['_LISTPROFILESRESPONSE']._serialized_end=866
-  _globals['_CREATEPROFILEREQUEST']._serialized_start=869
-  _globals['_CREATEPROFILEREQUEST']._serialized_end=997
-  _globals['_GETPROFILEREQUEST']._serialized_start=999
-  _globals['_GETPROFILEREQUEST']._serialized_end=1038
-  _globals['_UPDATEPROFILEREQUEST']._serialized_start=1041
-  _globals['_UPDATEPROFILEREQUEST']._serialized_end=1247
-  _globals['_DELETEPROFILEREQUEST']._serialized_start=1249
-  _globals['_DELETEPROFILEREQUEST']._serialized_end=1291
-  _globals['_DELETEPROFILERESPONSE']._serialized_start=1293
-  _globals['_DELETEPROFILERESPONSE']._serialized_end=1316
-  _globals['_PROFILERESPONSE']._serialized_start=1318
-  _globals['_PROFILERESPONSE']._serialized_end=1368
-  _globals['_USERSERVICE']._serialized_start=1371
-  _globals['_USERSERVICE']._serialized_end=1984
+  _globals['_SETPASSWORDREQUEST']._serialized_start=574
+  _globals['_SETPASSWORDREQUEST']._serialized_end=629
+  _globals['_SETPASSWORDRESPONSE']._serialized_start=631
+  _globals['_SETPASSWORDRESPONSE']._serialized_end=652
+  _globals['_VERIFYPASSWORDREQUEST']._serialized_start=654
+  _globals['_VERIFYPASSWORDREQUEST']._serialized_end=710
+  _globals['_VERIFYPASSWORDRESPONSE']._serialized_start=712
+  _globals['_VERIFYPASSWORDRESPONSE']._serialized_end=804
+  _globals['_PROFILE']._serialized_start=807
+  _globals['_PROFILE']._serialized_end=1000
+  _globals['_LISTPROFILESREQUEST']._serialized_start=1002
+  _globals['_LISTPROFILESREQUEST']._serialized_end=1040
+  _globals['_LISTPROFILESRESPONSE']._serialized_start=1042
+  _globals['_LISTPROFILESRESPONSE']._serialized_end=1098
+  _globals['_CREATEPROFILEREQUEST']._serialized_start=1101
+  _globals['_CREATEPROFILEREQUEST']._serialized_end=1229
+  _globals['_GETPROFILEREQUEST']._serialized_start=1231
+  _globals['_GETPROFILEREQUEST']._serialized_end=1270
+  _globals['_UPDATEPROFILEREQUEST']._serialized_start=1273
+  _globals['_UPDATEPROFILEREQUEST']._serialized_end=1479
+  _globals['_DELETEPROFILEREQUEST']._serialized_start=1481
+  _globals['_DELETEPROFILEREQUEST']._serialized_end=1523
+  _globals['_DELETEPROFILERESPONSE']._serialized_start=1525
+  _globals['_DELETEPROFILERESPONSE']._serialized_end=1548
+  _globals['_PROFILERESPONSE']._serialized_start=1550
+  _globals['_PROFILERESPONSE']._serialized_end=1600
+  _globals['_USERSERVICE']._serialized_start=1603
+  _globals['_USERSERVICE']._serialized_end=2365
 # @@protoc_insertion_point(module_scope)
