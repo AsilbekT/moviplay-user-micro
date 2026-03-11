@@ -131,6 +131,33 @@ class Database:
                 "total_pages": max(1, (total + page_size - 1) // page_size),
             }
 
+    async def update_user(self, user_id: int, **kwargs) -> dict | None:
+        """Update a user's fields. Returns updated user dict or None if not found."""
+        if not kwargs:
+            return await self.get_user(user_id)
+
+        set_clauses = []
+        values = []
+        idx = 1
+        for field in ("username", "email", "phone_number", "is_admin"):
+            if field in kwargs:
+                idx += 1
+                set_clauses.append(f"{field} = ${idx}")
+                values.append(kwargs[field])
+
+        if not set_clauses:
+            return await self.get_user(user_id)
+
+        idx += 1
+        set_clauses.append(f"updated_at = now()")
+        query = f"""
+            UPDATE users SET {', '.join(set_clauses)}
+            WHERE id = $1
+            RETURNING id, username, email, phone_number, google_id, apple_id, is_admin
+        """
+        row = await self.pool.fetchrow(query, user_id, *values)
+        return dict(row) if row else None
+
     async def delete_user(self, user_id: int) -> bool:
         """Delete a user and all their profiles. Returns True if deleted, False if not found."""
         async with self.pool.acquire() as conn:

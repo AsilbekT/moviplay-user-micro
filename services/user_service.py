@@ -211,6 +211,79 @@ class UserService(users_pb2_grpc.UserServiceServicer):
             )
             return
 
+    async def UpdateUser(self, request, context):
+        try:
+            if request.user_id <= 0:
+                await abort(
+                    context,
+                    grpc.StatusCode.INVALID_ARGUMENT,
+                    ReasonCodes.INVALID_ID,
+                    "Invalid user_id. Must be a positive integer.",
+                    fields=[FieldViolation("user_id", "Must be greater than 0")],
+                )
+                return
+
+            # Determine which fields to update based on update_mask
+            update_mask = set(request.update_mask.paths) if request.update_mask and request.update_mask.paths else None
+
+            kwargs = {}
+            if update_mask is None or "username" in update_mask:
+                if request.username:
+                    kwargs["username"] = request.username
+            if update_mask is None or "email" in update_mask:
+                if request.email:
+                    kwargs["email"] = request.email
+            if update_mask is None or "phone_number" in update_mask:
+                if request.phone_number:
+                    kwargs["phone_number"] = request.phone_number
+            if update_mask is not None and "is_admin" in update_mask:
+                kwargs["is_admin"] = request.is_admin
+
+            user = await self.db.update_user(request.user_id, **kwargs)
+            if not user:
+                await abort(
+                    context,
+                    grpc.StatusCode.NOT_FOUND,
+                    ReasonCodes.USER_NOT_FOUND,
+                    f"User with ID {request.user_id} not found.",
+                )
+                return
+
+            return users_pb2.UserResponse(
+                user_id=int(user["id"]),
+                username=user.get("username") or "",
+                email=user.get("email") or "",
+                phone_number=user.get("phone_number") or "",
+                google_id=user.get("google_id") or "",
+                apple_id=user.get("apple_id") or "",
+                is_admin=user.get("is_admin", False),
+            )
+
+        except asyncpg.PostgresConnectionError:
+            await abort(
+                context,
+                grpc.StatusCode.UNAVAILABLE,
+                ReasonCodes.DB_UNAVAILABLE,
+                "Database is temporarily unavailable.",
+            )
+
+        except asyncpg.QueryCanceledError:
+            await abort(
+                context,
+                grpc.StatusCode.DEADLINE_EXCEEDED,
+                ReasonCodes.DB_TIMEOUT,
+                "Database request timed out.",
+            )
+
+        except Exception as e:
+            logger.exception(f"UpdateUser failed: {e}")
+            await abort(
+                context,
+                grpc.StatusCode.INTERNAL,
+                ReasonCodes.INTERNAL_ERROR,
+                "An internal error occurred.",
+            )
+
     async def DeleteUser(self, request, context):
         try:
             if request.user_id <= 0:
