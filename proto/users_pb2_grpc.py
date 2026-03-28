@@ -57,6 +57,11 @@ class UserServiceStub(object):
                 request_serializer=users__pb2.DeleteUserRequest.SerializeToString,
                 response_deserializer=users__pb2.DeleteUserResponse.FromString,
                 _registered_method=True)
+        self.UpdateUser = channel.unary_unary(
+                '/users.UserService/UpdateUser',
+                request_serializer=users__pb2.UpdateUserRequest.SerializeToString,
+                response_deserializer=users__pb2.UserResponse.FromString,
+                _registered_method=True)
         self.SetPassword = channel.unary_unary(
                 '/users.UserService/SetPassword',
                 request_serializer=users__pb2.SetPasswordRequest.SerializeToString,
@@ -120,6 +125,12 @@ class UserServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def DeleteUser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateUser(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -191,6 +202,11 @@ def add_UserServiceServicer_to_server(servicer, server):
                     servicer.DeleteUser,
                     request_deserializer=users__pb2.DeleteUserRequest.FromString,
                     response_serializer=users__pb2.DeleteUserResponse.SerializeToString,
+            ),
+            'UpdateUser': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateUser,
+                    request_deserializer=users__pb2.UpdateUserRequest.FromString,
+                    response_serializer=users__pb2.UserResponse.SerializeToString,
             ),
             'SetPassword': grpc.unary_unary_rpc_method_handler(
                     servicer.SetPassword,
@@ -339,6 +355,33 @@ class UserService(object):
             '/users.UserService/DeleteUser',
             users__pb2.DeleteUserRequest.SerializeToString,
             users__pb2.DeleteUserResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UpdateUser(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/users.UserService/UpdateUser',
+            users__pb2.UpdateUserRequest.SerializeToString,
+            users__pb2.UserResponse.FromString,
             options,
             channel_credentials,
             insecure,

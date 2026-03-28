@@ -110,19 +110,32 @@ class Database:
                 """, username, email, phone_number, google_id, apple_id)
                 return dict(user)
 
-    async def list_users(self, page: int = 1, page_size: int = 10) -> dict:
-        """List all users with pagination."""
+    async def list_users(self, page: int = 1, page_size: int = 10, search: str = "") -> dict:
+        """List users with pagination and optional search."""
         offset = (page - 1) * page_size
 
         async with self.pool.acquire() as conn:
-            total = await conn.fetchval("SELECT COUNT(*) FROM users")
-
-            rows = await conn.fetch("""
-                SELECT id, username, email, phone_number, google_id, apple_id, is_admin
-                FROM users
-                ORDER BY id ASC
-                LIMIT $1 OFFSET $2
-            """, page_size, offset)
+            if search:
+                pattern = f"%{search}%"
+                total = await conn.fetchval(
+                    "SELECT COUNT(*) FROM users WHERE username ILIKE $1 OR email ILIKE $1 OR phone_number ILIKE $1",
+                    pattern
+                )
+                rows = await conn.fetch("""
+                    SELECT id, username, email, phone_number, google_id, apple_id, is_admin
+                    FROM users
+                    WHERE username ILIKE $1 OR email ILIKE $1 OR phone_number ILIKE $1
+                    ORDER BY id ASC
+                    LIMIT $2 OFFSET $3
+                """, pattern, page_size, offset)
+            else:
+                total = await conn.fetchval("SELECT COUNT(*) FROM users")
+                rows = await conn.fetch("""
+                    SELECT id, username, email, phone_number, google_id, apple_id, is_admin
+                    FROM users
+                    ORDER BY id ASC
+                    LIMIT $1 OFFSET $2
+                """, page_size, offset)
 
             return {
                 "users": [dict(row) for row in rows],

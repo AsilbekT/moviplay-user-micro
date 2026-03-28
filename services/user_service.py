@@ -162,8 +162,9 @@ class UserService(users_pb2_grpc.UserServiceServicer):
         try:
             page = max(request.page, 1)
             page_size = min(max(request.page_size, 1), 100)
+            search = request.search.strip() if request.search else ""
 
-            result = await self.db.list_users(page, page_size)
+            result = await self.db.list_users(page, page_size, search)
 
             return users_pb2.ListUsersResponse(
                 users=[
